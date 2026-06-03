@@ -37,12 +37,27 @@ margin-bottom:12px;
 box-shadow:0 6px 16px rgba(0,0,0,0.08);
 }
 
-input,button{
+*{
+box-sizing:border-box;
+}
+
+input, button{
 width:100%;
+max-width:100%;
 padding:12px;
 border-radius:10px;
-margin-top:8px;
+margin-bottom:10px;
+font-size:14px;
+}
+
+input{
 border:1px solid #ddd;
+outline:none;
+}
+
+input:focus{
+border-color:#6b4e36;
+box-shadow:0 0 0 2px rgba(107,78,54,0.15);
 }
 
 button{
@@ -104,7 +119,7 @@ opacity:0.4;
 <!-- SEARCH -->
 <div class="card">
 <div class="title">🔍 Member Lookup</div>
-<input id="phone" placeholder="Phone Number">
+<input id="phone" placeholder="Phone Number" onblur="normalizePhone(this)">
 <input id="email" placeholder="Email">
 <button onclick="search()">Search</button>
 </div>
@@ -150,7 +165,7 @@ document.getElementById("result").innerHTML=
 "<div class='card'>No member found</div>";
 return;
 }
-
+document.getElementById("searchBox").style.display="none";
 let m=data.data;
 
 document.getElementById("result").innerHTML=`
@@ -227,7 +242,24 @@ html+=`
 
 return html;
 }
+function normalizePhone(input){
+let phone = input.value.trim();
 
+// remove non-numeric
+phone = phone.replace(/[^0-9]/g,'');
+
+// 012 → 6012
+if(phone.startsWith("0")){
+phone = "6" + phone;
+}
+
+// ensure 60 prefix
+if(!phone.startsWith("60")){
+phone = "60" + phone;
+}
+
+input.value = phone;
+}
 </script>
 
 </body>
