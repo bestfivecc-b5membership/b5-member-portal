@@ -152,6 +152,9 @@ alert("Enter phone or email");
 return;
 }
 
+document.getElementById("result").innerHTML=
+"<div class='card'>Searching...</div>";
+
 let url="https://script.google.com/macros/s/AKfycbyw_wc2HirKbFq6Yn6sL2YC_SpXZb0J5K2Kd-k0uKYfRTwhXHg6sy_RbFzSYV6w8NCp5A/exec?mode=member";
 
 if(phone) url+="&phone="+phone;
@@ -168,8 +171,11 @@ return;
 
 let m=data.data;
 
-document.getElementById("result").innerHTML=`
+// 🔥 IMPORTANT: hide search box HERE (correct place)
 document.getElementById("searchBox").style.display="none";
+
+document.getElementById("result").innerHTML=`
+
 <!-- PROFILE -->
 <div class="card">
 <div class="title">👤 Profile</div>
