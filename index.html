@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>B5 Member Portal</title>
+
+<style>
+
+body{
+margin:0;
+font-family:Arial;
+background:#f6f1e8;
+color:#4b3b2a;
+}
+
+.header{
+background:#6b4e36;
+color:white;
+padding:18px;
+text-align:center;
+font-size:18px;
+font-weight:bold;
+}
+
+.container{
+padding:15px;
+max-width:600px;
+margin:auto;
+}
+
+.card{
+background:white;
+padding:16px;
+border-radius:14px;
+margin-bottom:12px;
+box-shadow:0 6px 16px rgba(0,0,0,0.08);
+}
+
+input,button{
+width:100%;
+padding:12px;
+border-radius:10px;
+margin-top:8px;
+border:1px solid #ddd;
+}
+
+button{
+background:#6b4e36;
+color:white;
+border:none;
+cursor:pointer;
+}
+
+.title{
+font-weight:bold;
+margin-bottom:10px;
+}
+
+.big{
+font-size:22px;
+font-weight:bold;
+}
+
+.small{
+font-size:12px;
+color:#888;
+}
+
+.reward-item{
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:10px 0;
+border-bottom:1px solid #eee;
+}
+
+.reward-left{
+font-size:14px;
+}
+
+.badge{
+font-size:12px;
+padding:3px 8px;
+background:#eee;
+border-radius:8px;
+}
+
+.disabled{
+opacity:0.4;
+}
+
+.hide{display:none;}
+
+</style>
+</head>
+
+<body>
+
+<div class="header">🎁 B5 Member Portal</div>
+
+<div class="container">
+
+<!-- SEARCH -->
+<div class="card">
+<div class="title">🔍 Member Lookup</div>
+<input id="phone" placeholder="Phone Number">
+<input id="email" placeholder="Email">
+<button onclick="search()">Search</button>
+</div>
+
+<div id="result"></div>
+
+</div>
+
+<script>
+
+function maskEmail(email){
+if(!email) return "-";
+let parts=email.split("@");
+if(parts.length!==2) return email;
+return parts[0].slice(0,1)+"***@"+parts[1];
+}
+
+function toggle(id){
+let el=document.getElementById(id);
+el.style.display = el.style.display==="none"?"block":"none";
+}
+
+async function search(){
+
+let phone=document.getElementById("phone").value.trim();
+let email=document.getElementById("email").value.trim();
+
+if(!phone && !email){
+alert("Enter phone or email");
+return;
+}
+
+let url="https://script.google.com/macros/s/AKfycbyw_wc2HirKbFq6Yn6sL2YC_SpXZb0J5K2Kd-k0uKYfRTwhXHg6sy_RbFzSYV6w8NCp5A/exec?mode=member";
+
+if(phone) url+="&phone="+phone;
+if(email) url+="&email="+email;
+
+let res=await fetch(url);
+let data=await res.json();
+
+if(data.status!=="ok"){
+document.getElementById("result").innerHTML=
+"<div class='card'>No member found</div>";
+return;
+}
+
+let m=data.data;
+
+document.getElementById("result").innerHTML=`
+
+<!-- PROFILE -->
+<div class="card">
+<div class="title">👤 Profile</div>
+<b>${m.profile.name}</b><br>
+${m.profile.phone}<br>
+${maskEmail(m.profile.email)}<br>
+<span class="small">Member since: ${m.profile.memberSince}</span>
+</div>
+
+<!-- POINTS -->
+<div class="card">
+<div class="title">💰 Points</div>
+<div class="big">${m.points.balance}</div>
+<div class="small">Expiry: ${m.points.expiry}</div>
+</div>
+
+<!-- REWARDS -->
+<div class="card">
+<div class="title">🎁 Rewards</div>
+
+<div onclick="toggle('spin')" style="cursor:pointer;font-weight:bold;">Spin Reward ▶</div>
+<div id="spin" class="hide">
+${m.reward.name || "-"}<br>
+${m.reward.status || "-"}
+</div><br>
+
+<div onclick="toggle('birthday')" style="cursor:pointer;font-weight:bold;">Birthday Reward ▶</div>
+<div id="birthday" class="hide">
+${m.birthdayReward.status || "-"}
+</div><br>
+
+<div onclick="toggle('promo')" style="cursor:pointer;font-weight:bold;">Promo Reward ▶</div>
+<div id="promo" class="hide">
+${m.promoReward.status || "-"}
+</div>
+
+</div>
+
+<!-- CATALOG -->
+<div class="card">
+<div class="title">🛍 Reward Catalog</div>
+${renderCatalog(m.catalog, m.points.balance)}
+</div>
+
+`;
+
+}
+
+function renderCatalog(catalog, points){
+
+if(!catalog) return "";
+
+let html="";
+
+catalog.forEach(item=>{
+
+let can = points >= item.points;
+
+html+=`
+<div class="reward-item ${can?"":"disabled"}">
+<div class="reward-left">
+<b>${item.reward}</b><br>
+<span class="small">${item.points} pts</span>
+</div>
+<div class="badge">${can?"Available":"Locked"}</div>
+</div>
+`;
+
+});
+
+return html;
+}
+
+</script>
+
+</body>
+</html>
