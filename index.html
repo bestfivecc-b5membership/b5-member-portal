@@ -117,7 +117,7 @@ opacity:0.4;
 <div class="container">
 
 <!-- SEARCH -->
-<div class="card">
+<div class="card" id="searchBox">
 <div class="title">🔍 Member Lookup</div>
 <input id="phone" placeholder="Phone Number" onblur="normalizePhone(this)">
 <input id="email" placeholder="Email">
@@ -165,7 +165,7 @@ document.getElementById("result").innerHTML=
 "<div class='card'>No member found</div>";
 return;
 }
-
+document.getElementById("searchBox").style.display="none";
 let m=data.data;
 
 document.getElementById("result").innerHTML=`
