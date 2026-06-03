@@ -121,7 +121,7 @@ opacity:0.4;
 <div class="title">🔍 Member Lookup</div>
 <input id="phone" placeholder="Phone Number" onblur="normalizePhone(this)">
 <input id="email" placeholder="Email">
-<button onclick="search()">Search</button>
+<button id="searchBtn" onclick="search()">Search</button>
 </div>
 
 <div id="result"></div>
@@ -165,18 +165,47 @@ document.getElementById("result").innerHTML=
 "<div class='card'>No member found</div>";
 return;
 }
-document.getElementById("searchBox").style.display="none";
+
 let m=data.data;
 
+// hide search box
+document.getElementById("searchBox").style.display="none";
+
 document.getElementById("result").innerHTML=`
+
+<div class="card">
+<button onclick="location.reload()">🔍 New Search</button>
+</div>
 
 <!-- PROFILE -->
 <div class="card">
 <div class="title">👤 Profile</div>
+
 <b>${m.profile.name}</b><br>
 ${m.profile.phone}<br>
 ${maskEmail(m.profile.email)}<br>
-<span class="small">Member since: ${m.profile.memberSince}</span>
+
+${m.profile.tier ? `
+<div style="margin-top:10px;">
+<span style="
+background:#6b4e36;
+color:white;
+padding:4px 10px;
+border-radius:20px;
+font-size:12px;
+font-weight:bold;
+">
+${m.profile.tier}
+</span>
+</div>
+` : ""}
+
+<br>
+
+<span class="small">
+Member since: ${m.profile.memberSince}
+</span>
+
 </div>
 
 <!-- POINTS -->
@@ -190,18 +219,31 @@ ${maskEmail(m.profile.email)}<br>
 <div class="card">
 <div class="title">🎁 Rewards</div>
 
-<div onclick="toggle('spin')" style="cursor:pointer;font-weight:bold;">Spin Reward ▶</div>
+<div onclick="toggle('spin')" style="cursor:pointer;font-weight:bold;">
+Spin Reward ▶
+</div>
+
 <div id="spin" class="hide">
 ${m.reward.name || "-"}<br>
 ${m.reward.status || "-"}
-</div><br>
+</div>
 
-<div onclick="toggle('birthday')" style="cursor:pointer;font-weight:bold;">Birthday Reward ▶</div>
+<br>
+
+<div onclick="toggle('birthday')" style="cursor:pointer;font-weight:bold;">
+Birthday Reward ▶
+</div>
+
 <div id="birthday" class="hide">
 ${m.birthdayReward.status || "-"}
-</div><br>
+</div>
 
-<div onclick="toggle('promo')" style="cursor:pointer;font-weight:bold;">Promo Reward ▶</div>
+<br>
+
+<div onclick="toggle('promo')" style="cursor:pointer;font-weight:bold;">
+Promo Reward ▶
+</div>
+
 <div id="promo" class="hide">
 ${m.promoReward.status || "-"}
 </div>
