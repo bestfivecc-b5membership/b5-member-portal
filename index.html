@@ -152,8 +152,15 @@ alert("Enter phone or email");
 return;
 }
 
-document.getElementById("result").innerHTML=
-"<div class='card'>Searching...</div>";
+// 🔥 SHOW loading FIRST
+document.getElementById("result").innerHTML = `
+<div class="card" style="text-align:center;font-weight:bold;">
+⏳ Searching...
+</div>
+`;
+
+// 🔥 FORCE repaint (VERY IMPORTANT)
+await new Promise(r => setTimeout(r, 50));
 
 let url="https://script.google.com/macros/s/AKfycbyw_wc2HirKbFq6Yn6sL2YC_SpXZb0J5K2Kd-k0uKYfRTwhXHg6sy_RbFzSYV6w8NCp5A/exec?mode=member";
 
@@ -171,11 +178,10 @@ return;
 
 let m=data.data;
 
-// 🔥 IMPORTANT: hide search box HERE (correct place)
+// hide search box AFTER success
 document.getElementById("searchBox").style.display="none";
 
 document.getElementById("result").innerHTML=`
-
 <!-- PROFILE -->
 <div class="card">
 <div class="title">👤 Profile</div>
@@ -219,7 +225,6 @@ ${m.promoReward.status || "-"}
 <div class="title">🛍 Reward Catalog</div>
 ${renderCatalog(m.catalog, m.points.balance)}
 </div>
-
 `;
 
 }
