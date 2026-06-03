@@ -144,8 +144,6 @@ el.style.display = el.style.display==="none"?"block":"none";
 
 async function search(){
 
-try {
-
 let phone=document.getElementById("phone").value.trim();
 let email=document.getElementById("email").value.trim();
 
@@ -154,19 +152,15 @@ alert("Enter phone or email");
 return;
 }
 
-document.getElementById("result").innerHTML=
-"<div class='card'>Searching...</div>";
-
 let url="https://script.google.com/macros/s/AKfycbyw_wc2HirKbFq6Yn6sL2YC_SpXZb0J5K2Kd-k0uKYfRTwhXHg6sy_RbFzSYV6w8NCp5A/exec?mode=member";
 
-if(phone) url+="&phone="+encodeURIComponent(phone);
-if(email) url+="&email="+encodeURIComponent(email);
+if(phone) url+="&phone="+phone;
+if(email) url+="&email="+email;
 
-let res = await fetch(url);   // 🔥 IMPORTANT: NO ABORT CONTROLLER
+let res=await fetch(url);
+let data=await res.json();
 
-let data = await res.json();
-
-if(!data || data.status!=="ok"){
+if(data.status!=="ok"){
 document.getElementById("result").innerHTML=
 "<div class='card'>No member found</div>";
 return;
@@ -174,9 +168,12 @@ return;
 
 let m=data.data;
 
+// 🔥 FIX: hide search box AFTER success
 document.getElementById("searchBox").style.display="none";
 
 document.getElementById("result").innerHTML=`
+
+<!-- PROFILE -->
 <div class="card">
 <div class="title">👤 Profile</div>
 <b>${m.profile.name}</b><br>
@@ -185,12 +182,14 @@ ${maskEmail(m.profile.email)}<br>
 <span class="small">Member since: ${m.profile.memberSince}</span>
 </div>
 
+<!-- POINTS -->
 <div class="card">
 <div class="title">💰 Points</div>
 <div class="big">${m.points.balance}</div>
 <div class="small">Expiry: ${m.points.expiry}</div>
 </div>
 
+<!-- REWARDS -->
 <div class="card">
 <div class="title">🎁 Rewards</div>
 
@@ -212,20 +211,13 @@ ${m.promoReward.status || "-"}
 
 </div>
 
+<!-- CATALOG -->
 <div class="card">
 <div class="title">🛍 Reward Catalog</div>
 ${renderCatalog(m.catalog, m.points.balance)}
 </div>
+
 `;
-
-} catch(err){
-
-console.error(err);
-
-document.getElementById("result").innerHTML=
-"<div class='card'>Error loading data</div>";
-
-}
 
 }
 
