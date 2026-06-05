@@ -102,7 +102,7 @@ border-radius:8px;
 }
 
 .disabled{
-opacity:0.4;
+opacity:0.1;
 }
 
 .hide{display:none;}
@@ -306,6 +306,7 @@ let html = "";
 catalog.forEach(item => {
 
 const can = points >= item.points;
+const diff = item.points - points;
 
 html += `
 <div class="reward-card ${can ? "" : "disabled"}">
@@ -315,6 +316,7 @@ ${item.image ? `
 ` : ""}
 
 <div class="reward-info">
+
 <b>${item.reward}</b>
 
 <div class="small">
@@ -324,7 +326,11 @@ ${item.points} pts
 </div>
 
 <div class="badge">
-${can ? "Available" : "Locked"}
+${
+can
+? "✅ Available"
+: `⭐ Need ${diff} more pts`
+}
 </div>
 
 </div>
