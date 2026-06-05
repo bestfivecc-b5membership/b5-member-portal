@@ -298,27 +298,39 @@ ${renderCatalog(m.catalog, m.points.balance)}
 
 function renderCatalog(catalog, points){
 
-if(!catalog) return "";
+if(!catalog || !catalog.length) return "";
 
-let html="";
+let html = "";
 
-catalog.forEach(item=>{
+catalog.forEach(item => {
 
 let can = points >= item.points;
 
-html+=`
-<div class="reward-item ${can?"":"disabled"}">
+html += `
+<div class="reward-item ${can ? "" : "disabled"}">
+
 <div class="reward-left">
 <b>${item.reward}</b><br>
 <span class="small">${item.points} pts</span>
 </div>
-<div class="badge">${can?"Available":"Locked"}</div>
+
+<div class="reward-right">
+${item.image ? `
+<img src="${item.image}" class="reward-image">
+` : ""}
+</div>
+
+<div class="badge">
+${can ? "Available" : "Locked"}
+</div>
+
 </div>
 `;
 
 });
 
 return html;
+
 }
 
 function normalizePhone(input){
