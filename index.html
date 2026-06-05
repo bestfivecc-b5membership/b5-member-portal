@@ -298,77 +298,27 @@ ${renderCatalog(m.catalog, m.points.balance)}
 
 function renderCatalog(catalog, points){
 
-if(!catalog || !catalog.length) return "";
+if(!catalog) return "";
 
-let grouped = {};
+let html="";
 
 catalog.forEach(item=>{
 
-const category =
-(item.category || "Other").trim();
+let can = points >= item.points;
 
-if(!grouped[category]){
-grouped[category] = [];
-}
-
-grouped[category].push(item);
-
-});
-
-let html = "";
-
-Object.keys(grouped).forEach(category=>{
-
-html += `
-<div class="catalog-section">
-<div class="catalog-title">
-${category}
+html+=`
+<div class="reward-item ${can?"":"disabled"}">
+<div class="reward-left">
+<b>${item.reward}</b><br>
+<span class="small">${item.points} pts</span>
+</div>
+<div class="badge">${can?"Available":"Locked"}</div>
 </div>
 `;
-
-grouped[category].forEach(item=>{
-
-const can = points >= item.points;
-
-html += `
-<div class="reward-card ${can?"":"disabled"}">
-
-${item.image ? `
-<img
-class="reward-image"
-src="${item.image}"
->
-` : ""}
-
-<div class="reward-info">
-
-<b>${item.reward}</b>
-
-<div class="reward-category">
-${item.category || ""}
-</div>
-
-<div class="small">
-${item.points} pts
-</div>
-
-</div>
-
-<div class="badge">
-${can ? "Available" : "Locked"}
-</div>
-
-</div>
-`;
-
-});
-
-html += `</div>`;
 
 });
 
 return html;
-
 }
 
 function normalizePhone(input){
