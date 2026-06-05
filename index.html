@@ -301,53 +301,21 @@ function renderCatalog(catalog, points){
 
 if(!catalog || !catalog.length) return "";
 
-let grouped = {};
-
-catalog.forEach(item=>{
-
-const category =
-(item.category || "Other").trim();
-
-if(!grouped[category]){
-grouped[category] = [];
-}
-
-grouped[category].push(item);
-
-});
-
 let html = "";
 
-Object.keys(grouped).forEach(category=>{
-
-html += `
-<div class="catalog-section">
-<div class="catalog-title">
-${category}
-</div>
-`;
-
-grouped[category].forEach(item=>{
+catalog.forEach(item => {
 
 const can = points >= item.points;
 
 html += `
-<div class="reward-card ${can?"":"disabled"}">
+<div class="reward-card ${can ? "" : "disabled"}">
 
 ${item.image ? `
-<img
-class="reward-image"
-src="${item.image}"
->
+<img class="reward-image" src="${item.image}">
 ` : ""}
 
 <div class="reward-info">
-
 <b>${item.reward}</b>
-
-<div class="reward-category">
-${item.category || ""}
-</div>
 
 <div class="small">
 ${item.points} pts
@@ -361,10 +329,6 @@ ${can ? "Available" : "Locked"}
 
 </div>
 `;
-
-});
-
-html += `</div>`;
 
 });
 
