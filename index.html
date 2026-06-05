@@ -107,7 +107,7 @@ opacity:0.4;
 
 .hide{display:none;}
 
-  .reward-card{
+.reward-card{
 display:flex;
 align-items:center;
 gap:12px;
@@ -116,11 +116,12 @@ border-bottom:1px solid #eee;
 }
 
 .reward-image{
-width:40px;
-height:40px;
-border-radius:8px;
+width:60px;
+height:60px;
+border-radius:10px;
 object-fit:cover;
-margin-left:10px;
+background:#f3f3f3;
+flex-shrink:0;
 }
 
 .reward-info{
@@ -142,39 +143,6 @@ font-weight:bold;
 margin:12px 0 8px;
 color:#6b4e36;
 font-size:15px;
-}
-
-  .reward-item{
-display:flex;
-align-items:center;
-justify-content:space-between;
-padding:10px 0;
-border-bottom:1px solid #eee;
-gap:10px;
-}
-
-.reward-left{
-flex:1;
-}
-
-.reward-right{
-display:flex;
-align-items:center;
-}
-
-.reward-image{
-width:38px;
-height:38px;
-border-radius:8px;
-object-fit:cover;
-}
-
-.badge{
-font-size:12px;
-padding:3px 8px;
-background:#eee;
-border-radius:8px;
-white-space:nowrap;
 }
 </style>
 </head>
@@ -333,24 +301,58 @@ function renderCatalog(catalog, points){
 
 if(!catalog || !catalog.length) return "";
 
+let grouped = {};
+
+catalog.forEach(item=>{
+
+const category =
+(item.category || "Other").trim();
+
+if(!grouped[category]){
+grouped[category] = [];
+}
+
+grouped[category].push(item);
+
+});
+
 let html = "";
 
-catalog.forEach(item => {
-
-let can = points >= item.points;
+Object.keys(grouped).forEach(category=>{
 
 html += `
-<div class="reward-item ${can ? "" : "disabled"}">
+<div class="catalog-section">
+<div class="catalog-title">
+${category}
+</div>
+`;
 
-<div class="reward-left">
-<b>${item.reward}</b><br>
-<span class="small">${item.points} pts</span>
+grouped[category].forEach(item=>{
+
+const can = points >= item.points;
+
+html += `
+<div class="reward-card ${can?"":"disabled"}">
+
+${item.image ? `
+<img
+class="reward-image"
+src="${item.image}"
+>
+` : ""}
+
+<div class="reward-info">
+
+<b>${item.reward}</b>
+
+<div class="reward-category">
+${item.category || ""}
 </div>
 
-<div class="reward-right">
-${item.image ? `
-<img src="${item.image}" class="reward-image">
-` : ""}
+<div class="small">
+${item.points} pts
+</div>
+
 </div>
 
 <div class="badge">
@@ -359,6 +361,10 @@ ${can ? "Available" : "Locked"}
 
 </div>
 `;
+
+});
+
+html += `</div>`;
 
 });
 
